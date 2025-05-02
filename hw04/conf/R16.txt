@@ -1,0 +1,134 @@
+!
+! Last configuration change at 10:13:21 UTC Thu May 1 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R16
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+ip dhcp pool VLAN20
+ network 10.2.2.0 255.255.255.0
+ default-router 10.2.2.1
+ domain-name piter.linux.technology
+ dns-server 10.2.2.1
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.2.254.16 255.255.255.255
+ ipv6 address FC00:ABCD:2:FFFE::16/128
+!
+interface Ethernet0/0
+ no ip address
+!
+interface Ethernet0/0.20
+ encapsulation dot1Q 20
+ ip address 10.2.2.16 255.255.255.0
+ ipv6 address FC00:ABCD:2:2::16/64
+ vrrp 3 ip 10.2.2.1
+!
+interface Ethernet0/1
+ ip address 10.2.253.6 255.255.255.252
+ ipv6 address FC00:ABCD:2:FFFD:2::6/80
+!
+interface Ethernet0/2
+ no ip address
+!
+interface Ethernet0/2.10
+ encapsulation dot1Q 10
+ ip address 10.2.1.16 255.255.255.0
+ ipv6 address FC00:ABCD:2:1::16/64
+ vrrp 2 ip 10.2.1.1
+!
+interface Ethernet0/2.100
+ encapsulation dot1Q 100
+ ip address 10.2.255.16 255.255.255.0
+ ipv6 address FC00:ABCD:2:FFFF::16/64
+ vrrp 1 ip 10.2.255.1
+!
+interface Ethernet0/3
+ ip address 10.2.253.10 255.255.255.252
+ ipv6 address FC00:ABCD:2:FFFD:3::10/80
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end

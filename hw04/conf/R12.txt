@@ -1,0 +1,153 @@
+!
+! Last configuration change at 09:31:51 UTC Fri May 2 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R12
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+ip dhcp pool VLAN10
+ network 10.1.1.0 255.255.255.0
+ default-router 10.1.1.1
+ domain-name moscow.linux.technology
+ dns-server 10.1.1.1
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.1.254.12 255.255.255.255
+ ipv6 address FC00:ABCD:1:FFFE::12/128
+!
+interface Ethernet0/0
+ no ip address
+!
+interface Ethernet0/0.10
+ encapsulation dot1Q 10
+ ip address 10.1.1.12 255.255.255.0
+ ipv6 address FC00:ABCD:1:1::1/64
+ vrrp 2 ip 10.1.1.1
+ vrrp 2 priority 110
+!
+interface Ethernet0/0.100
+ encapsulation dot1Q 100
+ ip address 10.1.255.12 255.255.255.0
+ ipv6 address FC00:ABCD:1:FFFF::1/64
+ vrrp 1 ip 10.1.255.1
+ vrrp 1 priority 110
+!
+interface Ethernet0/1
+ no ip address
+!
+interface Ethernet0/1.20
+ encapsulation dot1Q 20
+ ip address 10.1.2.12 255.255.255.0
+ ipv6 address FC00:ABCD:1:2::1/64
+ vrrp 3 ip 10.1.2.1
+ vrrp 3 priority 110
+!
+interface Ethernet0/2
+ ip address 10.1.253.6 255.255.255.252
+ ipv6 address FC00:ABCD:1:FFFD:2::6/80
+!
+interface Ethernet0/3
+ ip address 10.1.253.14 255.255.255.252
+ ipv6 address FC00:ABCD:1:FFFD:4::14/80
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end

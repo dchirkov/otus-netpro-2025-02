@@ -1,0 +1,111 @@
+!
+! Last configuration change at 13:10:36 UTC Sun Apr 27 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R18
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.2.254.18 255.255.255.255
+ ipv6 address FC00:ABCD:2:FFFE::18/128
+!
+interface Ethernet0/0
+ ip address 10.2.253.5 255.255.255.252
+ ipv6 address FC00:ABCD:2:FFFD:2::5/80
+!
+interface Ethernet0/1
+ ip address 10.2.253.1 255.255.255.252
+ ipv6 address FC00:ABCD:2:FFFD:1::1/80
+!
+interface Ethernet0/2
+ ip address 23.7.9.2 255.255.255.252
+ ipv6 address 2900:3456:3000:1::2/64
+!
+interface Ethernet0/3
+ ip address 23.7.9.6 255.255.255.252
+ ipv6 address 2900:3456:3000:2::6/64
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end

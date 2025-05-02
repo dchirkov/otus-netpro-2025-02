@@ -1,0 +1,165 @@
+!
+! Last configuration change at 07:26:08 UTC Mon Apr 28 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R28
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 10.4.1.1
+ip dhcp excluded-address 10.4.2.1
+!
+ip dhcp pool VLAN10
+ network 10.4.1.0 255.255.255.0
+ default-router 10.4.1.1
+ domain-name chokurdah.linux.technology
+ dns-server 10.4.1.1
+!
+ip dhcp pool VLAN20
+ network 10.4.2.0 255.255.255.0
+ default-router 10.4.2.1
+ domain-name chokurdah.linux.technology
+ dns-server 10.4.2.1
+!
+!
+!
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+ipv6 dhcp pool STATEFUL-VLAN10
+ address prefix FC00:ABCD:4:1::/64
+ dns-server FC00:ABCD:4:1::1
+ domain-name chokurdah.linux.technology
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.4.254.28 255.255.255.255
+ ipv6 address FC00:ABCD:4:FFFE::28/128
+!
+interface Ethernet0/0
+ ip address 23.7.9.10 255.255.255.252
+ ipv6 address 2900:3456:3000:3::10/64
+!
+interface Ethernet0/1
+ ip address 23.7.9.14 255.255.255.252
+ ipv6 address 2900:3456:3000:4::14/64
+!
+interface Ethernet0/2
+ no ip address
+!
+interface Ethernet0/2.10
+ description VLAN10
+ encapsulation dot1Q 10
+ ip address 10.4.1.1 255.255.255.0
+ ipv6 address FC00:ABCD:4:1::1/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server STATEFUL-VLAN10
+!
+interface Ethernet0/2.20
+ description VLAN20
+ encapsulation dot1Q 20
+ ip address 10.4.2.1 255.255.255.0
+ ipv6 address FC00:ABCD:4:2::1/64
+!
+interface Ethernet0/2.100
+ encapsulation dot1Q 100
+ ip address 10.4.255.1 255.255.255.0
+ ipv6 address FC00:ABCD:4:FFFF::1/64
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end
