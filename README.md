@@ -6,3 +6,4 @@
 2. [Избыточность локальных сетей. STP](hw02/README.md)
 3. [DHCPv4/v6 и SLAAC](hw03/README.md)
 4. [Архитектура сети](hw04/README.md)
+5. [Маршрутизация на основе политик (PBR)](hw05/README.md)
