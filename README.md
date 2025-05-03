@@ -7,3 +7,4 @@
 3. [DHCPv4/v6 и SLAAC](hw03/README.md)
 4. [Архитектура сети](hw04/README.md)
 5. [Маршрутизация на основе политик (PBR)](hw05/README.md)
+6. [OSPF. Фильтрация](hw06/README.md)
