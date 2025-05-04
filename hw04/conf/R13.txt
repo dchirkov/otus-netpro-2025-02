@@ -1,5 +1,5 @@
 !
-! Last configuration change at 09:58:25 UTC Fri May 2 2025
+! Last configuration change at 08:14:18 UTC Sun May 4 2025
 !
 version 15.4
 service timestamps debug datetime msec
@@ -29,12 +29,6 @@ mmi snmp-timeout 180
 
 
 !
-!
-ip dhcp pool VLAN20
- network 10.1.2.0 255.255.255.0
- default-router 10.1.2.1
- domain-name moscow.linux.technology
- dns-server 10.1.2.1
 !
 !
 !
@@ -74,28 +68,12 @@ interface Loopback0
  ipv6 address FC00:ABCD:1:FFFE::13/128
 !
 interface Ethernet0/0
- no ip address
-!
-interface Ethernet0/0.20
- encapsulation dot1Q 20
- ip address 10.1.2.13 255.255.255.0
- ipv6 address FC00:ABCD:1:2::13/64
- vrrp 3 ip 10.1.2.1
+ ip address 10.1.253.37 255.255.255.252
+ ipv6 address FC00:ABCD:1:FFFD:10::37/80
 !
 interface Ethernet0/1
- no ip address
-!
-interface Ethernet0/1.10
- encapsulation dot1Q 10
- ip address 10.1.1.13 255.255.255.0
- ipv6 address FC00:ABCD:1:1::13/64
- vrrp 2 ip 10.1.1.1
-!
-interface Ethernet0/1.100
- encapsulation dot1Q 100
- ip address 10.1.255.13 255.255.255.0
- ipv6 address FC00:ABCD:1:FFFF::13/64
- vrrp 1 ip 10.1.255.1
+ ip address 10.1.253.33 255.255.255.252
+ ipv6 address FC00:ABCD:1:FFFD:9::33/80
 !
 interface Ethernet0/2
  ip address 10.1.253.18 255.255.255.252
