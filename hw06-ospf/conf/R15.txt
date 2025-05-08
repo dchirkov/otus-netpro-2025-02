@@ -1,0 +1,133 @@
+!
+! Last configuration change at 10:31:14 UTC Thu May 8 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R15
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.1.254.15 255.255.255.255
+ ipv6 address FC00:ABCD:1:FFFE::15/128
+ ospfv3 1 ipv4 area 0
+ ospfv3 1 ipv6 area 0
+!
+interface Ethernet0/0
+ ip address 10.1.253.17 255.255.255.252
+ ipv6 address FC00:ABCD:1:FFFD:5::17/80
+ ospfv3 1 ipv4 area 0
+ ospfv3 1 ipv6 area 0
+!
+interface Ethernet0/1
+ ip address 10.1.253.13 255.255.255.252
+ ipv6 address FC00:ABCD:1:FFFD:4::13/80
+ ospfv3 1 ipv4 area 0
+ ospfv3 1 ipv6 area 0
+!
+interface Ethernet0/2
+ ip address 158.43.5.2 255.255.255.252
+ ipv6 address 2500:2345:2000:1::2/64
+!
+interface Ethernet0/3
+ ip address 10.1.253.21 255.255.255.252
+ ipv6 address FC00:ABCD:1:FFFD:6::21/80
+ ospfv3 network point-to-point
+ ospfv3 1 ipv4 area 102
+ ospfv3 1 ipv6 area 102
+!
+router ospfv3 1
+ !
+ address-family ipv4 unicast
+  default-information originate
+ exit-address-family
+ !
+ address-family ipv6 unicast
+  default-information originate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 158.43.5.1
+!
+ipv6 route ::/0 2500:2345:2000:1::1
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end
