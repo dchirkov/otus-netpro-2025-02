@@ -282,7 +282,7 @@ router ospfv3 1
 
 ```bash
 R20#sh ip route | inc 10.1.253.0
-R20#sh ip route | inc FC00:ABCD:1:FFFD:1::/80
+R20#sh ipv6 route | inc FC00:ABCD:1:FFFD:1::/80
 R20#
 ```
 
