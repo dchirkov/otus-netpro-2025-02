@@ -1,0 +1,137 @@
+!
+! Last configuration change at 10:59:41 UTC Sat May 17 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R26
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.18.254.26 255.255.255.255
+ ip router isis
+ ipv6 address FC00:3456:3000:FFFE::26/128
+ ipv6 router isis
+!
+interface Ethernet0/0
+ ip address 172.18.253.14 255.255.255.252
+ ip router isis
+ ipv6 address FC00:3456:3000:FFFD:4::14/80
+ ipv6 router isis
+!
+interface Ethernet0/1
+ ip address 23.7.9.9 255.255.255.252
+ ipv6 address 2900:3456:3000:3::9/64
+!
+interface Ethernet0/2
+ ip address 172.18.253.10 255.255.255.252
+ ip router isis
+ ipv6 address FC00:3456:3000:FFFD:3::10/80
+ ipv6 router isis
+!
+interface Ethernet0/3
+ ip address 23.7.9.5 255.255.255.252
+ ipv6 address 2900:3456:3000:2::5/64
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router isis
+ net 49.0026.1720.1825.4026.00
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end

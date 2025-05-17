@@ -8,3 +8,4 @@
 4. [Архитектура сети](hw04-design/README.md)
 5. [Маршрутизация на основе политик (PBR)](hw05-pbr-ip-sla/README.md)
 6. [OSPF. Фильтрация](hw06-ospf/README.md)
+7. [Протокол IS-IS](hw07-is-is/README.md)
