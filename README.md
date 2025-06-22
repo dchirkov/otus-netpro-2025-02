@@ -10,3 +10,4 @@
 6. [OSPF. Фильтрация](hw06-ospf/README.md)
 7. [Протокол IS-IS](hw07-is-is/README.md)
 8. [Протокол EIGRP](hw08-eigrp/README.md)
+9. [Основы eBPG](hw09-bgp/README.md)
