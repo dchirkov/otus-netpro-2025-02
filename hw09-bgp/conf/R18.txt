@@ -1,0 +1,158 @@
+!
+! Last configuration change at 12:52:41 UTC Sat Jun 21 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R18
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.2.254.18 255.255.255.255
+ ipv6 address FC00:ABCD:2:FFFE::18/128
+!
+interface Ethernet0/0
+ ip address 10.2.253.5 255.255.255.252
+ ipv6 address FC00:ABCD:2:FFFD:2::5/80
+!
+interface Ethernet0/1
+ ip address 10.2.253.1 255.255.255.252
+ ipv6 address FC00:ABCD:2:FFFD:1::1/80
+!
+interface Ethernet0/2
+ ip address 23.7.9.2 255.255.255.252
+ ipv6 address 2900:3456:3000:1::2/64
+!
+interface Ethernet0/3
+ ip address 23.7.9.6 255.255.255.252
+ ipv6 address 2900:3456:3000:2::6/64
+!
+!
+router eigrp PITER
+ !
+ address-family ipv4 unicast autonomous-system 2042
+  !
+  topology base
+   redistribute bgp 2042 metric 10000 1 255 1 1500
+  exit-af-topology
+  network 10.2.253.0 0.0.0.3
+  network 10.2.253.4 0.0.0.3
+  network 10.2.254.18 0.0.0.0
+  eigrp router-id 10.2.254.18
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 2042
+  !
+  topology base
+   redistribute bgp 2042 metric 10000 1 255 1 1500
+  exit-af-topology
+  eigrp router-id 10.2.254.18
+ exit-address-family
+!
+router bgp 2042
+ bgp router-id 10.2.254.18
+ bgp log-neighbor-changes
+ neighbor 23.7.9.1 remote-as 520
+ neighbor 23.7.9.5 remote-as 520
+ neighbor 2900:3456:3000:1::1 remote-as 520
+ neighbor 2900:3456:3000:2::5 remote-as 520
+ !
+ address-family ipv4
+  redistribute connected
+  redistribute eigrp 2042
+  neighbor 23.7.9.1 activate
+  neighbor 23.7.9.5 activate
+  no neighbor 2900:3456:3000:1::1 activate
+  no neighbor 2900:3456:3000:2::5 activate
+ exit-address-family
+ !
+ address-family ipv6
+  redistribute connected
+  redistribute eigrp 2042
+  neighbor 2900:3456:3000:1::1 activate
+  neighbor 2900:3456:3000:2::5 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end

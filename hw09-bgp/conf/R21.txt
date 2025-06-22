@@ -1,0 +1,166 @@
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R21
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.17.254.21 255.255.255.255
+ ipv6 address FC00:2345:2000:FFFE::21/128
+!
+interface Ethernet0/0
+ ip address 158.43.5.1 255.255.255.252
+ ipv6 address 2500:2345:2000:1::1/64
+!
+interface Ethernet0/1
+ ip address 78.10.11.6 255.255.255.252
+ ipv6 address 3000:1234:1000:2::6/64
+!
+interface Ethernet0/2
+ ip address 158.43.5.5 255.255.255.252
+ ipv6 address 2500:2345:2000:2::5/64
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router bgp 301
+ bgp router-id 172.17.254.21
+ bgp log-neighbor-changes
+ neighbor 2500:2345:2000:1::2 remote-as 1001
+ neighbor 2500:2345:2000:2::6 remote-as 520
+ neighbor 3000:1234:1000:2::5 remote-as 101
+ neighbor 78.10.11.5 remote-as 101
+ neighbor 158.43.5.2 remote-as 1001
+ neighbor 158.43.5.6 remote-as 520
+ !
+ address-family ipv4
+  redistribute connected
+  no neighbor 2500:2345:2000:1::2 activate
+  no neighbor 2500:2345:2000:2::6 activate
+  no neighbor 3000:1234:1000:2::5 activate
+  neighbor 78.10.11.5 activate
+  neighbor 158.43.5.2 activate
+  neighbor 158.43.5.2 default-originate
+  neighbor 158.43.5.2 route-map SEND-DEFAULT out
+  neighbor 158.43.5.6 activate
+ exit-address-family
+ !
+ address-family ipv6
+  redistribute connected
+  neighbor 2500:2345:2000:1::2 activate
+  neighbor 2500:2345:2000:1::2 default-originate
+  neighbor 2500:2345:2000:1::2 route-map SEND-DEFAULT out
+  neighbor 2500:2345:2000:2::6 activate
+  neighbor 3000:1234:1000:2::5 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 Null0
+!
+!
+ip prefix-list DEFAULT-ONLY seq 5 permit 0.0.0.0/0
+ipv6 route ::/0 Null0
+!
+!
+ipv6 prefix-list DEFAULT-ONLY seq 10 permit ::/0
+route-map SEND-DEFAULT permit 10
+ match ip address prefix-list DEFAULT-ONLY
+ match ipv6 address prefix-list DEFAULT-ONLY
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end
