@@ -11,3 +11,4 @@
 7. [Протокол IS-IS](hw07-is-is/README.md)
 8. [Протокол EIGRP](hw08-eigrp/README.md)
 9. [Основы eBPG](hw09-bgp/README.md)
+10. [Масштабируемость и дизайн iBGP](hw10-ibgp/README.md)
