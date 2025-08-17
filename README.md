@@ -12,3 +12,4 @@
 8. [Протокол EIGRP](hw08-eigrp/README.md)
 9. [Основы eBPG](hw09-bgp/README.md)
 10. [Масштабируемость и дизайн iBGP](hw10-ibgp/README.md)
+11. [BGP. Управление анонсами](hw11-filter-bgp/README.md)
