@@ -1,0 +1,198 @@
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R15
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.1.254.15 255.255.255.255
+ ipv6 address FC00:ABCD:1:FFFE::15/128
+ ospfv3 1 ipv6 area 0
+ ospfv3 1 ipv4 area 0
+!
+interface Tunnel0
+ ip address 10.0.0.1 255.255.255.252
+ tunnel source Ethernet0/2
+ tunnel destination 23.7.10.2
+!
+interface Tunnel1
+ ip address 10.100.0.1 255.255.0.0
+ no ip redirects
+ ip nhrp authentication OTUS
+ ip nhrp map multicast dynamic
+ ip nhrp network-id 1
+ ip nhrp redirect
+ tunnel source Ethernet0/2
+ tunnel mode gre multipoint
+ tunnel key 1
+!
+interface Ethernet0/0
+ ip address 10.1.253.17 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ipv6 address FC00:ABCD:1:FFFD:5::17/80
+ ospfv3 1 ipv6 area 0
+ ospfv3 1 ipv4 area 0
+!
+interface Ethernet0/1
+ ip address 10.1.253.13 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ipv6 address FC00:ABCD:1:FFFD:4::13/80
+ ospfv3 1 ipv6 area 0
+ ospfv3 1 ipv4 area 0
+!
+interface Ethernet0/2
+ ip address 158.43.6.2 255.255.255.0
+ ip nat outside
+ ip virtual-reassembly in
+ ipv6 address 2500:2345:2000:1::2/64
+!
+interface Ethernet0/3
+ ip address 10.1.253.21 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ipv6 address FC00:ABCD:1:FFFD:6::21/80
+ ospfv3 network point-to-point
+ ospfv3 1 ipv6 area 102
+ ospfv3 1 ipv4 area 102
+!
+router ospfv3 1
+ !
+ address-family ipv4 unicast
+  redistribute connected
+  redistribute bgp 1001
+  default-information originate
+ exit-address-family
+ !
+ address-family ipv6 unicast
+  redistribute connected
+  redistribute bgp 1001
+ exit-address-family
+!
+router bgp 1001
+ bgp router-id 10.1.254.15
+ bgp log-neighbor-changes
+ neighbor 10.0.0.2 remote-as 2042
+ neighbor 10.0.0.2 update-source Tunnel0
+ neighbor 10.1.254.14 remote-as 1001
+ neighbor 10.1.254.14 update-source Loopback0
+ neighbor 2500:2345:2000:1::1 remote-as 301
+ neighbor 158.43.6.1 remote-as 301
+ neighbor FC00:ABCD:1:FFFE::14 remote-as 1001
+ neighbor FC00:ABCD:1:FFFE::14 update-source Loopback0
+ !
+ address-family ipv4
+  network 10.1.0.0 mask 255.255.0.0
+  neighbor 10.0.0.2 activate
+  neighbor 10.0.0.2 route-map SET_LOCAL_PREF in
+  neighbor 10.1.254.14 activate
+  no neighbor 2500:2345:2000:1::1 activate
+  neighbor 158.43.6.1 activate
+  neighbor 158.43.6.1 route-map SET_LOCAL_PREF in
+  neighbor 158.43.6.1 filter-list 10 out
+  no neighbor FC00:ABCD:1:FFFE::14 activate
+ exit-address-family
+ !
+ address-family ipv6
+  network FC00:ABCD:1::/48
+  neighbor 2500:2345:2000:1::1 activate
+  neighbor 2500:2345:2000:1::1 route-map SET_LOCAL_PREF in
+  neighbor 2500:2345:2000:1::1 filter-list 10 out
+  neighbor FC00:ABCD:1:FFFE::14 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+ip as-path access-list 10 permit ^$
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 101 interface Ethernet0/2 overload
+ip nat inside source static 10.1.253.22 158.43.6.3
+ip route 10.1.0.0 255.255.0.0 Null0
+!
+ipv6 route FC00:ABCD:1::/48 Null0
+!
+route-map SET_LOCAL_PREF permit 10
+ set local-preference 150
+!
+!
+access-list 101 permit ip 10.1.0.0 0.0.255.255 any
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+ntp server 10.1.254.12
+ntp server 10.1.254.13
+!
+end

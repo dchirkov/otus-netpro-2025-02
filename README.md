@@ -14,3 +14,4 @@
 10. [Масштабируемость и дизайн iBGP](hw10-ibgp/README.md)
 11. [BGP. Управление анонсами](hw11-filter-bgp/README.md)
 12. [Основные протоколы сети интернет](hw12-general-protocols/README.md)
+13. [Виртуальная частные сети - VPN](hw13-vpn/README.md)
