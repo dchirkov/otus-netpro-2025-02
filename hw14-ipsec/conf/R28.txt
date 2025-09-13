@@ -1,0 +1,260 @@
+!
+! Last configuration change at 09:44:57 UTC Sat Sep 13 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R28
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 10.4.1.1
+ip dhcp excluded-address 10.4.2.1
+!
+ip dhcp pool VLAN10
+ network 10.4.1.0 255.255.255.0
+ default-router 10.4.1.1
+ domain-name chokurdah.linux.technology
+ dns-server 10.4.1.1
+!
+ip dhcp pool VLAN20
+ network 10.4.2.0 255.255.255.0
+ default-router 10.4.2.1
+ domain-name chokurdah.linux.technology
+ dns-server 10.4.2.1
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+ipv6 dhcp pool STATEFUL-VLAN10
+ address prefix FC00:ABCD:4:1::/64
+ dns-server FC00:ABCD:4:1::1
+ domain-name chokurdah.linux.technology
+!
+ipv6 dhcp pool STATEFUL-VLAN20
+ address prefix FC00:ABCD:4:2::/64
+ dns-server FC00:ABCD:4:2::1
+ domain-name chokurdah.linux.technology
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+track 10 ip sla 1 reachability
+ delay down 5 up 5
+!
+track 20 ip sla 2 reachability
+ delay down 5 up 5
+!
+!
+!
+crypto ikev2 proposal IKEv2-PROPOSAL
+ encryption aes-cbc-256
+ integrity sha256
+ group 14
+!
+crypto ikev2 policy IKEv2-POLICY
+ proposal IKEv2-PROPOSAL
+!
+crypto ikev2 keyring IKEv2-KEYRING-ANY
+ peer ANY
+  address 0.0.0.0 0.0.0.0
+  pre-shared-key OTUS
+ !
+!
+!
+crypto ikev2 profile IKEv2-PROFILE-ANY
+ match identity remote any
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local IKEv2-KEYRING-ANY
+!
+!
+!
+crypto ipsec transform-set IPSec-TRANSFORM esp-aes 256 esp-sha256-hmac
+ mode tunnel
+!
+crypto ipsec profile IPSEC-PROFILE-ANY
+ set transform-set IPSec-TRANSFORM
+ set ikev2-profile IKEv2-PROFILE-ANY
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.4.254.28 255.255.255.255
+ ipv6 address FC00:ABCD:4:FFFE::28/128
+!
+interface Tunnel0
+ ip address 10.100.0.10 255.255.0.0
+ no ip redirects
+ ip nhrp authentication OTUS
+ ip nhrp map 10.100.0.1 158.43.6.2
+ ip nhrp map 10.100.0.2 78.10.12.2
+ ip nhrp map multicast 158.43.6.2
+ ip nhrp map multicast 78.10.12.2
+ ip nhrp network-id 1
+ ip nhrp nhs 10.100.0.1
+ ip nhrp nhs 10.100.0.2
+ ip nhrp shortcut
+ tunnel source Ethernet0/0
+ tunnel mode gre multipoint
+ tunnel key 1
+ tunnel protection ipsec profile IPSEC-PROFILE-ANY
+!
+interface Ethernet0/0
+ ip address 23.7.9.10 255.255.255.252
+ ipv6 address 2900:3456:3000:3::10/64
+!
+interface Ethernet0/1
+ ip address 23.7.9.14 255.255.255.252
+ ipv6 address 2900:3456:3000:4::14/64
+!
+interface Ethernet0/2
+ no ip address
+!
+interface Ethernet0/2.10
+ description VLAN10
+ encapsulation dot1Q 10
+ ip address 10.4.1.1 255.255.255.0
+ ip policy route-map POLICY_ROUTING
+ ipv6 address FC00:ABCD:4:1::1/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server STATEFUL-VLAN10
+ ipv6 policy route-map POLICY_ROUTING
+!
+interface Ethernet0/2.20
+ description VLAN20
+ encapsulation dot1Q 20
+ ip address 10.4.2.1 255.255.255.0
+ ip policy route-map POLICY_ROUTING
+ ipv6 address FC00:ABCD:4:2::1/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server STATEFUL-VLAN20
+ ipv6 policy route-map POLICY_ROUTING
+!
+interface Ethernet0/2.100
+ encapsulation dot1Q 100
+ ip address 10.4.255.1 255.255.255.0
+ ipv6 address FC00:ABCD:4:FFFF::1/64
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 23.7.9.9
+ip route 0.0.0.0 0.0.0.0 23.7.9.13 10
+!
+ip sla 1
+ icmp-echo 23.7.9.9
+ frequency 10
+ip sla schedule 1 life forever start-time now
+ip sla 2
+ icmp-echo 23.7.9.13
+ frequency 15
+ip sla schedule 2 life forever start-time now
+ipv6 route ::/0 2900:3456:3000:3::9
+ipv6 route ::/0 2900:3456:3000:4::13 10
+!
+route-map POLICY_ROUTING permit 10
+ match ip address 10
+ match ipv6 address EMPLOYEE_VLAN10
+ set ip next-hop verify-availability 23.7.9.9 1 track 10
+ set ip next-hop 23.7.9.13
+ set ipv6 next-hop 2900:3456:3000:3::9
+!
+route-map POLICY_ROUTING permit 20
+ match ip address 20
+ match ipv6 address EMPLOYEE_VLAN20
+ set ip next-hop verify-availability 23.7.9.13 1 track 20
+ set ip next-hop 23.7.9.9
+ set ipv6 next-hop 2900:3456:3000:4::13
+!
+!
+access-list 10 permit 10.4.1.0 0.0.0.255
+access-list 20 permit 10.4.2.0 0.0.0.255
+!
+ipv6 access-list EMPLOYEE_VLAN10
+ sequence 20 permit ipv6 FC00:ABCD:4:1::/64 any
+!
+ipv6 access-list EMPLOYEE_VLAN20
+ sequence 20 permit ipv6 FC00:ABCD:4:2::/64 any
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end

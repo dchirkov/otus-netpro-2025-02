@@ -1,0 +1,163 @@
+!
+! Last configuration change at 09:58:25 UTC Sat Sep 13 2025
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+service compress-config
+!
+hostname SW5
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+ip dhcp pool VLAN20
+ network 10.1.2.0 255.255.255.0
+ default-router 10.1.2.1
+ domain-name moscow.linux.technology
+ dns-server 10.1.2.1
+ option 42 ip 10.1.254.13
+!
+!
+no ip domain-lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+ --More--
+*Sep 13 09:58:38.249: %OSPFv3-5-ADJCHG: Process 1, IPv6, Nbr 10.1.254.13 on Ethernet1/0 from LOADING to FULL, Loading Done
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.1.254.5 255.255.255.255
+ ipv6 address FC00:ABCD:1:FFFE::5/128
+ ospfv3 1 ipv6 area 10
+ ospfv3 1 ipv4 area 10
+!
+interface Port-channel1
+ switchport trunk allowed vlan 10,20,100
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/0
+ switchport trunk allowed vlan 10,20,100
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/1
+ switchport trunk allowed vlan 10,20,100
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+!
+interface Ethernet0/2
+ switchport trunk allowed vlan 10,20,100
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface Ethernet0/3
+ switchport trunk allowed vlan 10,20,100
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface Ethernet1/0
+ no switchport
+ ip address 10.1.253.38 255.255.255.252
+ duplex auto
+ ipv6 address FC00:ABCD:1:FFFD:10::38/80
+ ospfv3 1 ipv6 area 10
+ ospfv3 1 ipv4 area 10
+!
+interface Ethernet1/1
+ no switchport
+ ip address 10.1.253.30 255.255.255.252
+ duplex auto
+ ipv6 address FC00:ABCD:1:FFFD:8::30/80
+ ospfv3 1 ipv6 area 10
+ ospfv3 1 ipv4 area 10
+!
+interface Ethernet1/2
+!
+interface Ethernet1/3
+!
+interface Vlan10
+ ip address 10.1.1.5 255.255.255.0
+ ipv6 address FC00:ABCD:1:1::5/64
+ ospfv3 1 ipv6 area 10
+ ospfv3 1 ipv4 area 10
+ vrrp 2 ip 10.1.1.1
+!
+interface Vlan20
+ ip address 10.1.2.5 255.255.255.0
+ ipv6 address FC00:ABCD:1:2::5/64
+ ospfv3 1 ipv6 area 10
+ ospfv3 1 ipv4 area 10
+ vrrp 3 ip 10.1.2.1
+!
+interface Vlan100
+ ip address 10.1.255.5 255.255.255.0
+ ipv6 address FC00:ABCD:1:FFFF::5/64
+ ospfv3 1 ipv6 area 10
+ ospfv3 1 ipv4 area 10
+ vrrp 1 ip 10.1.255.1
+!
+router ospfv3 1
+ area 10 stub
+ !
+ address-family ipv4 unicast
+ exit-address-family
+ !
+ address-family ipv6 unicast
+ exit-address-family
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+!
+ntp server 10.1.254.12
+ntp server 10.1.254.13
+!
+end

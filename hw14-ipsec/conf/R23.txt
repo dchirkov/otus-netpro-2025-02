@@ -1,0 +1,184 @@
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R23
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 172.18.254.23 255.255.255.255
+ ip router isis
+ ipv6 address FC00:3456:3000:FFFE::23/128
+ ipv6 router isis
+!
+interface Ethernet0/0
+ ip address 78.10.11.10 255.255.255.252
+ ipv6 address 3000:1234:1000:3::10/64
+!
+interface Ethernet0/1
+ ip address 172.18.253.5 255.255.255.252
+ ip router isis
+ ipv6 address FC00:3456:3000:FFFD:2::5/80
+ ipv6 router isis
+ isis circuit-type level-1
+!
+interface Ethernet0/2
+ ip address 172.18.253.1 255.255.255.252
+ ip router isis
+ ipv6 address FC00:3456:3000:FFFD:1::1/80
+ ipv6 router isis
+ isis circuit-type level-2-only
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router isis
+ net 49.2222.1720.1825.4023.00
+ metric-style wide
+!
+router bgp 520
+ bgp router-id 172.18.254.23
+ bgp log-neighbor-changes
+ neighbor TRIADA peer-group
+ neighbor TRIADA remote-as 520
+ neighbor TRIADA update-source Loopback0
+ neighbor TRIADA6 peer-group
+ neighbor TRIADA6 remote-as 520
+ neighbor TRIADA6 update-source Loopback0
+ neighbor 3000:1234:1000:3::9 remote-as 101
+ neighbor 78.10.11.9 remote-as 101
+ neighbor 172.18.254.24 peer-group TRIADA
+ neighbor 172.18.254.25 peer-group TRIADA
+ neighbor 172.18.254.26 peer-group TRIADA
+ neighbor FC00:3456:3000:FFFE::24 peer-group TRIADA6
+ neighbor FC00:3456:3000:FFFE::25 peer-group TRIADA6
+ neighbor FC00:3456:3000:FFFE::26 peer-group TRIADA6
+ !
+ address-family ipv4
+  network 172.18.0.0
+  redistribute connected
+  neighbor TRIADA route-reflector-client
+  neighbor TRIADA next-hop-self
+  no neighbor 3000:1234:1000:3::9 activate
+  neighbor 78.10.11.9 activate
+  neighbor 172.18.254.24 activate
+  neighbor 172.18.254.25 activate
+  neighbor 172.18.254.26 activate
+  no neighbor FC00:3456:3000:FFFE::24 activate
+  no neighbor FC00:3456:3000:FFFE::25 activate
+  no neighbor FC00:3456:3000:FFFE::26 activate
+ exit-address-family
+ !
+ address-family ipv6
+  redistribute connected
+  network FC00:3456:3000::/48
+  neighbor TRIADA6 route-reflector-client
+  neighbor TRIADA6 next-hop-self
+  neighbor 3000:1234:1000:3::9 activate
+  neighbor FC00:3456:3000:FFFE::24 activate
+  neighbor FC00:3456:3000:FFFE::25 activate
+  neighbor FC00:3456:3000:FFFE::26 activate
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 172.18.0.0 255.255.0.0 Null0
+!
+ipv6 route FC00:3456:3000::/48 Null0
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+!
+end

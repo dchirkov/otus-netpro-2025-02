@@ -1,0 +1,132 @@
+!
+! Last configuration change at 13:06:18 UTC Sat Aug 23 2025
+! NVRAM config last updated at 10:04:50 UTC Sat Sep 13 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R19
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip domain name linux.technology
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+username admin privilege 15 secret 5 $1$7dWf$KpxxUPT42rqUpu5xWKaKu/
+!
+redundancy
+!
+!
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.1.254.19 255.255.255.255
+ ipv6 address FC00:ABCD:1:FFFE::19/128
+ ospfv3 1 ipv6 area 101
+ ospfv3 1 ipv4 area 101
+!
+interface Ethernet0/0
+ ip address 10.1.253.2 255.255.255.252
+ ipv6 address FC00:ABCD:1:FFFD:1::2/80
+ ospfv3 network point-to-point
+ ospfv3 1 ipv4 area 101
+ ospfv3 1 ipv6 area 101
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+router ospfv3 1
+ area 101 stub
+ !
+ address-family ipv4 unicast
+ exit-address-family
+ !
+ address-family ipv6 unicast
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+ntp server 10.1.254.12
+ntp server 10.1.254.13
+!
+end

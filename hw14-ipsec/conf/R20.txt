@@ -1,0 +1,135 @@
+!
+! Last configuration change at 11:40:57 UTC Sat Aug 23 2025
+! NVRAM config last updated at 10:05:24 UTC Sat Sep 13 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R20
+!
+boot-start-marker
+boot-end-marker
+!
+!
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.1.254.20 255.255.255.255
+ ipv6 address FC00:ABCD:1:FFFE::20/128
+ ospfv3 1 ipv4 area 102
+ ospfv3 1 ipv6 area 102
+!
+interface Ethernet0/0
+ ip address 10.1.253.22 255.255.255.252
+ ipv6 address FC00:ABCD:1:FFFD:6::22/80
+ ospfv3 network point-to-point
+ ospfv3 1 ipv4 area 102
+ ospfv3 1 ipv6 area 102
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+router ospfv3 1
+ !
+ address-family ipv4 unicast
+  distribute-list prefix FILTER_AREA101 in
+ exit-address-family
+ !
+ address-family ipv6 unicast
+  distribute-list prefix-list FILTER_AREA101 in
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+ip prefix-list FILTER_AREA101 seq 5 deny 10.1.253.0/30
+ip prefix-list FILTER_AREA101 seq 10 permit 0.0.0.0/0 le 32
+!
+!
+ipv6 prefix-list FILTER_AREA101 seq 5 deny FC00:ABCD:1:FFFD:1::/80
+ipv6 prefix-list FILTER_AREA101 seq 10 permit ::/0 le 128
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login
+ transport input none
+!
+ntp server 10.1.254.12
+ntp server 10.1.254.13
+!
+end
